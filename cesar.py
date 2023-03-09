@@ -2,6 +2,13 @@ import nltk
 nltk.download("words")
 from nltk.corpus import words
 word_list = set(words.words())
+def removespecials(word):
+    newword = ""
+    for letter in word:
+        if letter.lower() in alph:
+            newword+=letter
+    return newword
+
 def changed(word,i):
     newword = ""
     for letter in word:
@@ -9,32 +16,38 @@ def changed(word,i):
         if pos + i <= 25:
             newword += alph[pos+i]
         else: 
-            newword += alph[pos+i - 25]
+            newword += alph[pos+i - 26]
 
     return newword
 alph = "abcdefghijklmnopqrstuvwxyz"
-x = input("Input the message you want to decode please")
+x = input("Input the message you want to decode please\n\n")
 
 scores = {}
-truei = -1
+truei = []
 highscore = -1
 for i in range(0,26):
     newword = ""
     score = 0
     for k,word in enumerate(x.split(" ")):
-        newword += " "+ changed(word,i)
-        if changed(word,i) in word_list:
+        newword += " "+ changed(removespecials(word),i)
+        if changed(removespecials(word),i) in word_list:
             score += 1
-        if float(score) <k/2 and float(k) > 3.0:
+    
+        if float(score) <k/3 and float(k) > 3.0:
             break
     scores[i]=(score,newword)
 
     if score > highscore:
         highscore=score
 
-        truei = i
+        truei = [i]
+    elif score == highscore:
+        truei.append(i)
 
-print(f"We believe your sentence might have been {scores[truei][1]} with the decoding factor {truei}.")
+print("Possible encryptions might be: \n\n") 
+for tru in truei: 
+    print(f"\nWe believe your sentence might have been: \n\n {scores[tru][1]} with the decoding factor of {26-tru}\n\n")
+
 
 
 
